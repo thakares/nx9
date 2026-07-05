@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NX9 — Next Generation 9 | Software people can own, understand, and control</title>
+<meta name="description" content="NX9 is a philosophy-driven ecosystem of self-hosted, privacy-first Rust software by Sunil Thakare. No telemetry. No vendor lock-in. Software people can own, understand, and control.">
+<meta name="color-scheme" content="light dark">
+
+<!-- Favicons & App Icons -->
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#020617">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#020617">
+
+<style>
+/* ============================================================
+   1. DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg: #ffffff;
+  --bg-raised: #ffffff;
+  --surface: #f5f6f9;
+  --surface-hover: #ecefF4;
+  --border: #e1e4ea;
+  --border-strong: #cbd0da;
+  --text: #12151a;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --accent: #6d5df6;
+  --accent-strong: #5643e0;
+  --accent-soft: #eeecff;
+  --accent-contrast: #ffffff;
+  --dot: rgba(109, 93, 246, 0.14);
+  --line: rgba(109, 93, 246, 0.08);
+  --shadow: 0 1px 2px rgba(16, 20, 26, 0.04), 0 4px 16px rgba(16, 20, 26, 0.05);
+  --shadow-hover: 0 4px 10px rgba(109, 93, 246, 0.12), 0 16px 36px rgba(16, 20, 26, 0.1);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --content-max: 1180px;
+  --transition-theme: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+  /* Gradient palette — reused across icons, borders and glow shadows */
+  --grad-1: linear-gradient(135deg, #7c5cf9, #b18bfa);
+  --grad-2: linear-gradient(135deg, #06b6d4, #5eead4);
+  --grad-3: linear-gradient(135deg, #f59e0b, #fb923c);
+  --grad-4: linear-gradient(135deg, #ec4899, #fb7185);
+  --grad-5: linear-gradient(135deg, #10b981, #6ee7b7);
+  --grad-6: linear-gradient(135deg, #3b82f6, #7dd3fc);
+  --grad-7: linear-gradient(135deg, #ef4444, #f97316);
+  --glow-1: rgba(124, 92, 249, .35);
+  --glow-2: rgba(6, 182, 212, .35);
+  --glow-3: rgba(245, 158, 11, .35);
+  --glow-4: rgba(236, 72, 153, .35);
+  --glow-5: rgba(16, 185, 129, .35);
+  --glow-6: rgba(59, 130, 246, .35);
+  --glow-7: rgba(239, 68, 68, .35);
+}
+
+html[data-theme="dark"] {
+  --bg: #0a0c10;
+  --bg-raised: #12151b;
+  --surface: #161a21;
+  --surface-hover: #1d222b;
+  --border: #262c37;
+  --border-strong: #363e4b;
+  --text: #eceef2;
+  --text-secondary: #a7aec0;
+  --text-muted: #7c8497;
+  --accent: #9d8bff;
+  --accent-strong: #b6a7ff;
+  --accent-soft: #1c1a33;
+  --accent-contrast: #0a0c10;
+  --dot: rgba(157, 139, 255, 0.16);
+  --line: rgba(157, 139, 255, 0.08);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 4px 14px rgba(157, 139, 255, 0.18), 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: var(--transition-theme);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px),
+    radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 64px 64px, 64px 64px, 16px 16px;
+  background-position: -1px -1px, -1px -1px, -1px -1px;
+}
+
+/* Logo Theme Dynamic Filter */
+html[data-theme="light"] .nav-icon,
+html[data-theme="light"] .hero-logo,
+html[data-theme="light"] .footer-logo {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+button { font-family: inherit; }
+table { border-collapse: collapse; width: 100%; }
+
+::selection { background: var(--accent); color: var(--accent-contrast); }
+
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link {
+  position: absolute; left: 1rem; top: -100px;
+  background: var(--accent); color: var(--accent-contrast);
+  padding: 0.65rem 1.1rem; border-radius: var(--radius-sm);
+  font-size: 0.9rem; font-weight: 600; z-index: 200;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 1rem; }
+
+/* Hidden icon sprite sheet */
+.icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.icon {
+  width: 20px; height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.icon-badge {
+  width: 46px; height: 46px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+.icon-badge .icon { width: 24px; height: 24px; }
+
+/* Gradient utility classes */
+.grad-1 { background: var(--grad-1); }
+.grad-2 { background: var(--grad-2); }
+.grad-3 { background: var(--grad-3); }
+.grad-4 { background: var(--grad-4); }
+.grad-5 { background: var(--grad-5); }
+.grad-6 { background: var(--grad-6); }
+.grad-7 { background: var(--grad-7); }
+
+/* ============================================================
+   3. LAYOUT PRIMITIVES
+   ============================================================ */
+.wrap { max-width: var(--content-max); margin-inline: auto; padding-inline: 1.5rem; }
+section { padding-block: clamp(3.5rem, 7vw, 6.5rem); }
+.section-head { max-width: 680px; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--font-mono); font-size: 0.75rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: linear-gradient(90deg, var(--accent), #ec4899);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 0.75rem; font-weight: 700;
+}
+.section-title { font-size: clamp(1.6rem, 3.2vw, 2.25rem); font-weight: 800; letter-spacing: -0.01em; margin-bottom: 0.75rem; }
+.section-sub { color: var(--text-secondary); font-size: 1.05rem; max-width: 65ch; }
+
+/* ============================================================
+   4. NAVIGATION
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background-color: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(160%) blur(10px);
+  -webkit-backdrop-filter: saturate(160%) blur(10px);
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition-theme);
+}
+.nav-inner {
+  max-width: var(--content-max); margin-inline: auto; padding: 0.85rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.brand { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.15rem; letter-spacing: -0.01em; text-decoration: none; }
+.nav-icon { height: 26px; width: auto; }
+.nav-links { display: flex; align-items: center; gap: 0.15rem; }
+.nav-links a {
+  text-decoration: none; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);
+  padding: 0.5rem 0.65rem; border-radius: var(--radius-sm);
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+.nav-links a:hover { color: var(--text); background-color: var(--surface); }
+.nav-links a.is-active { color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 0.5rem; }
+
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  border-radius: var(--radius); padding: 0.45rem 0.7rem; font-size: 0.82rem;
+  font-family: var(--font-mono); cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.theme-toggle:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+
+.hamburger {
+  display: none; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  width: 40px; height: 40px; cursor: pointer; color: var(--text);
+  align-items: center; justify-content: center;
+}
+.hamburger span, .hamburger span::before, .hamburger span::after {
+  content: ""; display: block; width: 18px; height: 2px; background: currentColor; position: relative;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.hamburger span::before { position: absolute; top: -6px; }
+.hamburger span::after { position: absolute; top: 6px; }
+.hamburger[aria-expanded="true"] span { background: transparent; }
+.hamburger[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
+.hamburger[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 860px) {
+  .hamburger { display: inline-flex; }
+  .nav-links {
+    position: fixed; inset: 61px 0 auto 0; flex-direction: column; align-items: stretch;
+    background: var(--bg-raised); border-bottom: 1px solid var(--border); padding: 0.5rem;
+    gap: 0; transform: translateY(-8px); opacity: 0; pointer-events: none;
+    transition: transform 0.18s ease, opacity 0.18s ease; max-height: 80vh; overflow-y: auto;
+  }
+  .nav-links.is-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  .nav-links a { padding: 0.85rem 1rem; border-radius: var(--radius-sm); }
+}
+
+/* ============================================================
+   5. HERO
+   ============================================================ */
+.hero { padding-block: clamp(4rem, 10vw, 7.5rem) clamp(3rem, 6vw, 5rem); position: relative; overflow: hidden; }
+.hero::before {
+  content: ""; position: absolute; top: -20%; right: -10%; width: 560px; height: 560px;
+  background: radial-gradient(circle, var(--glow-1), transparent 70%);
+  filter: blur(10px); pointer-events: none; opacity: 0.55; z-index: 0;
+}
+.hero::after {
+  content: ""; position: absolute; bottom: -30%; left: -10%; width: 480px; height: 480px;
+  background: radial-gradient(circle, var(--glow-2), transparent 70%);
+  filter: blur(10px); pointer-events: none; opacity: 0.4; z-index: 0;
+}
+.hero .wrap { position: relative; z-index: 1; }
+.hero-kicker {
+  font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 1.25rem;
+}
+.hero-kicker::before { content: "$ "; color: var(--accent); }
+.hero-logo { max-width: 600px; width: 100%; height: auto; margin-bottom: 1rem; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3)); }
+.hero h2 { font-size: clamp(1.1rem, 2.6vw, 1.5rem); font-weight: 500; color: var(--text-secondary); margin-top: 0.6rem; letter-spacing: -0.005em; }
+.hero blockquote {
+  margin: 1.75rem 0 1.5rem; padding-left: 1.1rem;
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(180deg, var(--accent), #ec4899) 1;
+  font-size: clamp(1.05rem, 2vw, 1.3rem); font-weight: 600; max-width: 46ch;
+}
+.hero p.lede { max-width: 64ch; color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 1.25rem; }
+.hero-byline { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem; }
+.hero-byline strong { color: var(--text-secondary); }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+
+.btn {
+  position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 0.5rem;
+  font-weight: 600; font-size: 0.95rem; padding: 0.75rem 1.4rem; border-radius: var(--radius);
+  text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: linear-gradient(135deg, var(--accent), #ec4899); color: #fff; }
+.btn-primary:hover { box-shadow: 0 10px 24px var(--glow-1); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--text); border-color: var(--border-strong); }
+.btn-outline:hover { background: var(--surface); border-color: var(--accent); }
+.btn-sm { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
+
+.btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.5); transform: scale(0); pointer-events: none; animation: ripple 0.6s ease-out; }
+html[data-theme="dark"] .btn-outline .ripple { background: rgba(255,255,255,0.18); }
+@keyframes ripple { to { transform: scale(3); opacity: 0; } }
+
+/* ============================================================
+   6. ABOUT
+   ============================================================ */
+.about-panel {
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: clamp(1.5rem, 4vw, 2.5rem); font-size: 1.1rem; color: var(--text-secondary); line-height: 1.75;
+}
+.about-panel strong { color: var(--text); }
+
+/* ============================================================
+   7. COLORFUL CARD GRIDS
+   ============================================================ */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 1.15rem; }
+
+.card {
+  background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.6rem; position: relative; overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--card-grad, var(--grad-1));
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px var(--card-glow, var(--glow-1)); border-color: var(--border-strong); }
+.card .icon-badge { background: var(--card-grad, var(--grad-1)); }
+.card h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: 0.5rem; }
+.card p { color: var(--text-secondary); font-size: 0.94rem; }
+.card ul { margin-top: 0.6rem; }
+.card li {
+  color: var(--text-secondary); font-size: 0.9rem; position: relative; padding-left: 1.1rem; margin-top: 0.3rem;
+}
+.card li::before { content: "●"; position: absolute; left: 0; top: 0.05em; font-size: 0.55rem; color: var(--accent); }
+.card .card-tag {
+  font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--text-muted); display: block; margin-top: 0.9rem;
+}
+
+/* ============================================================
+   8. PROJECTS
+   ============================================================ */
+.callout {
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius: var(--radius); padding: 1.1rem 1.3rem; margin-bottom: 2rem; font-size: 0.95rem; color: var(--text-secondary);
+}
+.callout strong { color: var(--text); }
+.callout .icon { color: var(--accent); margin-top: 0.15rem; }
+
+.project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.15rem; }
+@media (max-width: 780px) { .project-grid { grid-template-columns: 1fr; } }
+
+.project-card {
+  background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.6rem; display: flex; flex-direction: column; gap: 0.9rem; position: relative; overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.project-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--card-grad, var(--grad-1)); }
+.project-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px var(--card-glow, var(--glow-1)); border-color: var(--border-strong); }
+.project-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.project-title { display: flex; align-items: center; gap: 0.65rem; }
+.project-title .icon-badge { width: 38px; height: 38px; margin-bottom: 0; border-radius: var(--radius-sm); background: var(--card-grad, var(--grad-1)); }
+.project-title .icon-badge .icon { width: 19px; height: 19px; }
+.project-card h3 { font-family: var(--font-mono); font-size: 1.02rem; font-weight: 700; }
+.status-badge {
+  font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.22rem 0.55rem; border-radius: 999px; white-space: nowrap; color: #fff; align-self: flex-start;
+}
+.project-card p.desc { color: var(--text-secondary); font-size: 0.93rem; }
+.tech-badges { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.5rem; }
+.tech-badge {
+  font-family: var(--font-mono); font-size: 0.72rem; color: #fff; border-radius: var(--radius-sm);
+  padding: 0.22rem 0.55rem; background: var(--card-grad, var(--grad-1)); opacity: 0.92;
+}
+.project-links { display: flex; gap: 0.6rem; margin-top: auto; padding-top: 0.5rem; }
+
+/* ============================================================
+   9. STATS
+   ============================================================ */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center; }
+.stat {
+  background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.75rem 1rem; position: relative; overflow: hidden;
+}
+.stat::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-grad, var(--grad-1)); }
+.stat .num {
+  font-family: var(--font-mono); font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700; display: block;
+  background: var(--card-grad, var(--grad-1)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat .label { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.35rem; }
+
+/* ============================================================
+   10. POSITIONING TABLE
+   ============================================================ */
+.positioning { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+.positioning table { min-width: 560px; }
+.positioning th, .positioning td { text-align: left; padding: 0.9rem 1.2rem; font-size: 0.92rem; }
+.positioning thead th {
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #fff; padding-block: 1rem;
+}
+.positioning thead th:first-child { background: var(--grad-7); }
+.positioning thead th:last-child { background: var(--grad-5); }
+.positioning tbody tr { border-top: 1px solid var(--border); background: var(--bg-raised); }
+.positioning tbody tr:nth-child(even) { background: var(--surface); }
+.positioning td:first-child { color: var(--text-muted); position: relative; padding-left: 2.2rem; }
+.positioning td:first-child::before { content: "✕"; position: absolute; left: 1.2rem; color: #ef4444; font-weight: 700; font-size: 0.8rem; }
+.positioning td:last-child { color: var(--text); font-weight: 600; position: relative; padding-left: 2.2rem; }
+.positioning td:last-child::before { content: "✓"; position: absolute; left: 1.2rem; color: #10b981; font-weight: 700; font-size: 0.8rem; }
+
+/* ============================================================
+   11. VISION
+   ============================================================ */
+.vision-panel {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+  border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(1.75rem, 5vw, 3rem);
+}
+.vision-panel::after {
+  content: ""; position: absolute; inset: 0; border-radius: var(--radius); padding: 1px;
+  background: linear-gradient(135deg, var(--accent), #ec4899, #06b6d4);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.5; pointer-events: none;
+}
+.vision-panel p {
+  font-size: clamp(1.1rem, 2.4vw, 1.4rem); font-weight: 500; letter-spacing: -0.005em; color: var(--text); max-width: 62ch; position: relative;
+}
+.vision-panel p + p { margin-top: 1.1rem; color: var(--text-secondary); font-weight: 400; font-size: clamp(1rem, 2vw, 1.15rem); }
+
+/* ============================================================
+   12. VALUES
+   ============================================================ */
+.value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 0.8rem; }
+.value-chip {
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 0.9rem; text-align: center;
+  background: var(--bg-raised); position: relative; overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.value-chip::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-grad, var(--grad-1)); }
+.value-chip:hover { transform: translateY(-3px); box-shadow: 0 10px 24px var(--card-glow, var(--glow-1)); }
+.value-chip .n {
+  font-family: var(--font-mono); font-size: 0.7rem; display: block; margin-bottom: 0.5rem; font-weight: 700;
+  background: var(--card-grad, var(--grad-1)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.value-chip .t { font-weight: 600; font-size: 0.95rem; }
+
+/* ============================================================
+   13. ROADMAP
+   ============================================================ */
+.roadmap-intro { color: var(--text-secondary); max-width: 70ch; margin-bottom: 2.5rem; font-size: 1rem; }
+.roadmap-intro strong { color: var(--text); }
+
+.circuit { display: flex; align-items: flex-start; overflow-x: auto; padding-block: 1rem 0.5rem; scrollbar-width: thin; }
+.node { flex: 1 0 100px; min-width: 100px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; padding-top: 2.75rem; }
+.node::before {
+  content: ""; position: absolute; top: 12px; left: -50%; width: 100%; height: 2px;
+  background: repeating-linear-gradient(90deg, var(--border-strong) 0 6px, transparent 6px 11px); z-index: 0;
+}
+.node:first-child::before { display: none; }
+.node.is-active::before { background: repeating-linear-gradient(90deg, var(--accent) 0 6px, transparent 6px 11px); }
+.node .pad {
+  width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border-strong); background: var(--bg-raised);
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.72rem;
+  font-weight: 700; color: var(--text-muted); position: absolute; top: 0; z-index: 1;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.node.is-active .pad {
+  border-color: transparent; background: var(--card-grad, var(--grad-1)); color: #fff;
+  box-shadow: 0 0 0 4px var(--card-glow, var(--glow-1));
+}
+.node:hover .pad { transform: scale(1.12); }
+.node .name { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; margin-top: 0.4rem; }
+.node .state { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+.node.is-active .state { color: var(--accent); font-weight: 600; }
+
+@media (max-width: 720px) {
+  .circuit { flex-direction: column; align-items: stretch; overflow-x: visible; }
+  .node { flex-direction: row; text-align: left; padding: 0 0 1.75rem 2.9rem; min-width: 0; align-items: flex-start; }
+  .node::before { top: 0; left: 13px; width: 2px; height: 100%; background: repeating-linear-gradient(180deg, var(--border-strong) 0 6px, transparent 6px 11px); }
+  .node.is-active::before { background: repeating-linear-gradient(180deg, var(--accent) 0 6px, transparent 6px 11px); }
+  .node .pad { top: 0; left: 0; }
+  .node .name { margin-top: 0; margin-left: 0.15rem; }
+  .node .text { display: flex; flex-direction: column; }
+}
+
+.roadmap-footnote { margin-top: 2rem; font-size: 0.95rem; color: var(--text-secondary); border-top: 1px solid var(--border); padding-top: 1.5rem; }
+.roadmap-footnote strong { color: var(--text); }
+
+/* ============================================================
+   14. REVEAL ANIMATION
+   ============================================================ */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ============================================================
+   15. FOOTER
+   ============================================================ */
+.site-footer { border-top: 1px solid var(--border); padding-block: 3rem 2rem; margin-top: 2rem; position: relative; overflow: hidden; }
+.site-footer::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--grad-1), var(--grad-2), var(--grad-3), var(--grad-4), var(--grad-5));
+}
+.footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
+.footer-brand .mark {
+  font-family: var(--font-mono); font-weight: 800; font-size: 1.3rem;
+  background: linear-gradient(135deg, var(--accent), #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.footer-logo { max-width: 300px; width: 100%; height: auto; opacity: 0.5; margin-bottom: 0.5rem; }
+.footer-brand .sub { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem; }
+.footer-motto { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; }
+.footer-links a:hover { color: var(--accent); }
+.footer-bottom {
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); text-align: center; letter-spacing: 0.02em;
+}
+
+@media print {
+  .site-header, .theme-toggle, .hamburger, .hero-ctas, .btn, .project-links, .circuit { display: none !important; }
+  body { background-image: none; color: #000; }
+  section { padding-block: 1rem; }
+  a { color: #000; text-decoration: underline; }
+  .card::before, .project-card::before, .stat::before, .value-chip::before { display: none; }
+}
+
+<style>
+.article-page {
+  padding-block: 4rem;
+}
+.article-content {
+  max-width: 800px;
+  margin-inline: auto;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+.article-content h1 {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.article-content h2 {
+  font-size: 1.75rem;
+  color: var(--text);
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+.article-content h3 {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+.article-content p {
+  margin-bottom: 1.5rem;
+}
+.article-content blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1.5rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--text);
+  background: var(--surface);
+  padding-block: 1rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 1.5rem;
+}
+.article-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+.article-content hr {
+  border: 0;
+  height: 1px;
+  background: var(--border);
+  margin-block: 3rem;
+}
+.article-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.article-content li {
+  margin-bottom: 0.5rem;
+}
+.article-content pre {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.article-content code {
+  font-family: var(--font-mono);
+  background: var(--surface);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--accent);
+}
+.article-content pre code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+}
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.article-content th, .article-content td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.article-content th {
+  background: var(--surface);
+  font-weight: 600;
+  color: var(--text);
+}
+.article-content tr:last-child td {
+  border-bottom: none;
+}
+</style>
+
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ICON SPRITE -->
+<svg class="icon-sprite" aria-hidden="true">
+  <defs>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 15a8 8 0 1116 0"/><path d="M12 15l4-5"/><circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 005.4-5.4l-2.5 2.5-2-2 2.5-2.5z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M4.5 7.5L12 12l7.5-4.5M12 12v9"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.3"/><circle cx="19" cy="18" r="2.3"/><path d="M5 8.3v3a4 4 0 004 4h6a4 4 0 004 4"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5M3 8l9 5 9-5"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l4 3-4 3M13 15h4"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/><path d="M6 12l3-3 2 2 4-4"/></symbol>
+    <symbol id="i-infinity" viewBox="0 0 24 24"><path d="M7 9a3.5 3.5 0 100 7 3.5 3.5 0 002.9-1.5L12 12l2.1 2.5A3.5 3.5 0 1017 9a3.5 3.5 0 00-2.9 1.5L12 13l-2.1-2.5A3.5 3.5 0 007 9z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M9 15l6-6"/><path d="M11 6l1-1a4 4 0 015.5 5.5l-2 2"/><path d="M13 18l-1 1a4 4 0 01-5.5-5.5l2-2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.3 4 5.3 4 8.5s-1.5 6.2-4 8.5c-2.5-2.3-4-5.3-4-8.5s1.5-6.2 4-8.5z"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 3v18"/><path d="M5 4h13l-3 4 3 4H5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 8v.01"/></symbol>
+    <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M6 8.2v7.6M6 8.2c0 4 3 5.8 6 5.8h4"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="#home" class="brand">
+      <img src="icon.svg" alt="" class="nav-icon">
+      NX9
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
+      <a href="/index.html#home" data-nav="home">Home</a>
+      <a href="/index.html#philosophy" data-nav="philosophy">Philosophy</a>
+      <a href="/index.html#architecture" data-nav="architecture">Architecture</a>
+      <a href="/index.html#projects" data-nav="projects">Projects</a>
+      <a href="/index.html#vision" data-nav="vision">Vision</a>
+      <a href="/index.html#values" data-nav="values">Values</a>
+      <a href="/index.html#roadmap" data-nav="roadmap">Roadmap</a>
+      <a href="case-study.html" target="_blank" class="is-active">Case Study</a>
+    </nav>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
+        <span id="themeIcon" aria-hidden="true">◐</span><span id="themeLabel">Theme</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="article-page">
+<div class="wrap article-content">
+<h1>NX9 Philosophy: Engineering Beyond Frameworks</h1>
+<h3><em>A real-world case study in software minimalism, explicit routing, and reduced attack surface</em></h3>
+<blockquote>
+<p><strong>"The best way to reduce complexity is not to manage more software—it is to deploy less software."</strong></p>
+</blockquote>
+<hr>
+<h1>Introduction</h1>
+<p>Modern software engineering often begins with a familiar question:</p>
+<blockquote>
+<p><strong>"Which framework should we use?"</strong></p>
+</blockquote>
+<p>NX9 begins with a different question:</p>
+<blockquote>
+<p><strong>"Do we need one at all?"</strong></p>
+</blockquote>
+<p>This is not an argument against frameworks.</p>
+<p>Frameworks have transformed software development and solved some of the most challenging engineering problems ever encountered.</p>
+<p>React revolutionized large-scale user interfaces at Facebook.</p>
+<p>Angular addressed Google's enterprise-scale application requirements.</p>
+<p>Laravel dramatically improved developer productivity for PHP applications.</p>
+<p>Spring Boot simplified enterprise Java development.</p>
+<p>Next.js made sophisticated React applications easier to deploy.</p>
+<p>These are remarkable engineering achievements.</p>
+<p>But they solved <strong>specific engineering problems</strong>.</p>
+<p>The question every project should ask is:</p>
+<blockquote>
+<p><strong>Do we have those same problems?</strong></p>
+</blockquote>
+<p>A personal website, a self-hosted utility, an authentication service, a URL shortener, or an infrastructure component rarely requires thousands of JavaScript packages, multiple runtimes, extensive middleware chains, complex build pipelines, and enormous dependency trees simply to deliver its intended functionality.</p>
+<p>For many projects, complexity becomes the default—not the requirement.</p>
+<p>NX9 deliberately chooses another path.</p>
+<hr>
+<h1>Production Snapshot</h1>
+<p>The observations presented in this article come directly from the production logs of <strong>nx9.in</strong> after its first public deployment.</p>
+<p>They are <strong>not</strong> the result of a penetration test, laboratory simulation, or synthetic benchmark.</p>
+<p>During the observation period:</p>
+<ul>
+<li>Multiple independent vulnerability scanners began probing the server shortly after public exposure.</li>
+<li>Automated requests targeted common framework artifacts, PHP files, WordPress installations, Laravel configuration, Vue projects, Docker deployments, and build-system outputs.</li>
+<li>Every vulnerability probe resulted in <strong><code>404 Not Found</code></strong>.</li>
+<li>Legitimate visitors—including desktop browsers, Android devices, Twitter/X crawlers, search crawlers, and internal users—continued to access the published resources normally.</li>
+</ul>
+<p>These observations provide a useful real-world case study of the NX9 engineering philosophy.</p>
+<hr>
+<h1>Engineering Beyond Frameworks</h1>
+<p>NX9 is founded on a simple engineering principle:</p>
+<blockquote>
+<p><strong>Deploy only the software necessary to solve the problem.</strong></p>
+</blockquote>
+<p>Nothing more.</p>
+<p>Nothing less.</p>
+<p>Every project within the NX9 ecosystem follows the same philosophy:</p>
+<ul>
+<li>Privacy First</li>
+<li>Self-Hosted First</li>
+<li>Linux Native</li>
+<li>Rust Native</li>
+<li>Single Binary Applications</li>
+<li>Explicit Routing</li>
+<li>Minimal Dependencies</li>
+<li>Open Source (FOSS)</li>
+<li>No Vendor Lock-In</li>
+<li>Operational Simplicity</li>
+</ul>
+<p>Frameworks are not avoided because they are "bad."</p>
+<p>They are avoided when they solve problems the application simply does not have.</p>
+<p>Every dependency should justify its existence.</p>
+<p>Every abstraction should earn its maintenance cost.</p>
+<p>Every additional component should provide value greater than the complexity it introduces.</p>
+<hr>
+<h1>Complexity Has a Cost</h1>
+<p>Modern applications are often assembled from enormous dependency trees.</p>
+<p>A simple "Hello World" project may involve:</p>
+<ul>
+<li>thousands of npm packages;</li>
+<li>hundreds of transitive dependencies;</li>
+<li>multiple build tools;</li>
+<li>package managers;</li>
+<li>runtime environments;</li>
+<li>framework-specific tooling;</li>
+<li>automated code generation.</li>
+</ul>
+<p>Each component is individually useful.</p>
+<p>Collectively, they increase operational responsibility.</p>
+<p>Every additional dependency must eventually be:</p>
+<ul>
+<li>installed;</li>
+<li>configured;</li>
+<li>updated;</li>
+<li>audited;</li>
+<li>monitored;</li>
+<li>patched;</li>
+<li>understood.</li>
+</ul>
+<p>NX9 asks a simple engineering question:</p>
+<blockquote>
+<p><strong>Can this problem be solved with significantly less software?</strong></p>
+</blockquote>
+<p>If the answer is yes, simplicity becomes the preferred design.</p>
+<hr>
+<h1>Real-World Validation</h1>
+<p>Shortly after <strong>nx9.in</strong> became publicly accessible, automated scanners began probing the server.</p>
+<p>The requests were not random.</p>
+<p>They were highly characteristic of Internet-wide reconnaissance targeting common deployment technologies.</p>
+<p>Representative examples included:</p>
+<pre><code>/.env
+/vendor/.env
+/wp-admin/
+/wp-content/
+/phpinfo.php
+/vercel.json
+/vite.config.ts
+/vendors~main.bundle.js
+/vue/
+/v1/admin/</code></pre>
+<p>These examples represent many similar probes observed throughout the production logs.</p>
+<p>The scanners were attempting to identify technologies rather than applications.</p>
+<hr>
+<h1>What the Bots Assumed</h1>
+<table><thead><tr><th>Probe</th><th>Likely Assumption</th></tr></thead><tbody>
+<tr><td><code>/.env</code></td><td>Laravel / PHP configuration</td></tr>
+<tr><td><code>/vendor/.env</code></td><td>Composer project</td></tr>
+<tr><td><code>/wp-admin/</code></td><td>WordPress</td></tr>
+<tr><td><code>/wp-content/</code></td><td>WordPress plugins</td></tr>
+<tr><td><code>/phpinfo.php</code></td><td>PHP runtime</td></tr>
+<tr><td><code>vite.config.ts</code></td><td>Vite project</td></tr>
+<tr><td><code>vendors~main.bundle.js</code></td><td>Webpack / React build</td></tr>
+<tr><td><code>vercel.json</code></td><td>Vercel deployment</td></tr>
+<tr><td><code>/vue/.env</code></td><td>Vue project</td></tr>
+<tr><td><code>/v1/admin/</code></td><td>Administrative API</td></tr>
+The production logs demonstrate a simple reality:</p>
+<p><strong>The scanners were not looking for NX9.</strong></p>
+<p>They were looking for technologies that dominate today's web.</p>
+<p>NX9 simply wasn't one of them.</p>
+<hr>
+<h1>What Actually Happened</h1>
+<p>Every probe produced essentially the same result.</p>
+<pre><code>404 Not Found</code></pre>
+<p>Not because NX9 blocked the requests.</p>
+<p>Not because a Web Application Firewall analyzed malicious behaviour.</p>
+<p>Not because an intrusion prevention system intervened.</p>
+<p>The requested resources simply did not exist.</p>
+<p>This distinction is important.</p>
+<p>There is a fundamental difference between software successfully defending itself and software that was never deployed in the first place.</p>
+<hr>
+<h1>Security Begins Before Deployment</h1>
+<p>Security is often associated with firewalls, intrusion detection systems, endpoint protection, and monitoring platforms.</p>
+<p>Those remain valuable.</p>
+<p>However, architecture itself is also a security decision.</p>
+<p>The production deployment contained:</p>
+<ul>
+<li>no PHP interpreter;</li>
+<li>no WordPress;</li>
+<li>no Laravel;</li>
+<li>no Composer vendor directory;</li>
+<li>no Node.js runtime;</li>
+<li>no exposed <code>.env</code> files;</li>
+<li>no framework-generated administration interfaces;</li>
+<li>no debug endpoints;</li>
+<li>no unnecessary middleware.</li>
+</ul>
+<p>Those components were never installed.</p>
+<p>Consequently, they were never available for attackers to discover.</p>
+<p>This is not security through obscurity.</p>
+<p>It is <strong>security through intentional software selection.</strong></p>
+<hr>
+<h1>Explicit Routing</h1>
+<p>One of the defining characteristics of NX9 applications is explicit routing.</p>
+<p>Only routes intentionally defined by the developer exist.</p>
+<p>Conceptually:</p>
+<svg width="100%" height="220" viewBox="0 0 250 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 250px; margin: 1.5rem 0;"><text x="20" y="25" font-family="var(--font-mono)" font-size="14" font-weight="700" fill="var(--accent)">/</text><line x1="24" y1="30" x2="24" y2="60" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="60" x2="50" y2="60" stroke="var(--border-strong)" stroke-width="2" /><text x="60" y="65" font-family="var(--font-mono)" font-size="14" font-weight="600" fill="var(--text)">/projects</text><line x1="24" y1="60" x2="24" y2="80" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="70" x2="24" y2="100" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="100" x2="50" y2="100" stroke="var(--border-strong)" stroke-width="2" /><text x="60" y="105" font-family="var(--font-mono)" font-size="14" font-weight="600" fill="var(--text)">/about</text><line x1="24" y1="100" x2="24" y2="120" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="110" x2="24" y2="140" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="140" x2="50" y2="140" stroke="var(--border-strong)" stroke-width="2" /><text x="60" y="145" font-family="var(--font-mono)" font-size="14" font-weight="600" fill="var(--text)">/contact</text><line x1="24" y1="140" x2="24" y2="160" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="150" x2="24" y2="180" stroke="var(--border-strong)" stroke-width="2" /><line x1="24" y1="180" x2="50" y2="180" stroke="var(--border-strong)" stroke-width="2" /><text x="60" y="185" font-family="var(--font-mono)" font-size="14" font-weight="600" fill="var(--text)">404 (Fallback)</text></svg>
+<p>There is no directory discovery.</p>
+<p>There is no automatic controller resolution.</p>
+<p>There is no runtime searching for matching files.</p>
+<p>If a route was never implemented, it simply cannot be reached.</p>
+<p>Unknown URLs immediately terminate at the application's fallback handler.</p>
+<hr>
+<h1>A Smaller Stack</h1>
+<p>Many modern web applications resemble:</p>
+<svg width="100%" height="476" viewBox="0 0 260 476" xmlns="http://www.w3.org/2000/svg" style="max-width: 300px; margin: 1.5rem 0;">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" />
+      </marker>
+    </defs>
+    <rect x="20.0" y="10" width="220" height="36" rx="18" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="1.5" /><text x="130.0" y="32.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Internet</text><line x1="130.0" y1="46" x2="130.0" y2="66" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="70" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="92.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Reverse Proxy</text><line x1="130.0" y1="106" x2="130.0" y2="126" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="130" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="152.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Runtime</text><line x1="130.0" y1="166" x2="130.0" y2="186" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="190" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="212.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Framework</text><line x1="130.0" y1="226" x2="130.0" y2="246" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="250" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="272.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Middleware</text><line x1="130.0" y1="286" x2="130.0" y2="306" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="310" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="332.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Plugins</text><line x1="130.0" y1="346" x2="130.0" y2="366" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="370" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="392.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Packages</text><line x1="130.0" y1="406" x2="130.0" y2="426" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="430" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="452.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Application</text></svg>
+<p>NX9 deliberately reduces the stack.</p>
+<svg width="100%" height="296" viewBox="0 0 260 296" xmlns="http://www.w3.org/2000/svg" style="max-width: 300px; margin: 1.5rem 0;">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" />
+      </marker>
+    </defs>
+    <rect x="20.0" y="10" width="220" height="36" rx="18" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="1.5" /><text x="130.0" y="32.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Internet</text><line x1="130.0" y1="46" x2="130.0" y2="66" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="70" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="92.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Nginx</text><line x1="130.0" y1="106" x2="130.0" y2="126" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="130" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="152.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Rust Binary</text><line x1="130.0" y1="166" x2="130.0" y2="186" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="190" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="212.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Explicit Route Table</text><line x1="130.0" y1="226" x2="130.0" y2="246" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="250" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="272.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Application Logic</text></svg>
+<p>The objective is not minimalism for its own sake.</p>
+<p>The objective is proportional engineering.</p>
+<hr>
+<h1>Why NX9 Chose This Path</h1>
+<p>The previous comparison is not intended to suggest that one architecture is universally superior.</p>
+<p>Frameworks remain exceptional engineering tools.</p>
+<p>React solved Facebook's problems.</p>
+<p>Angular solved Google's.</p>
+<p>Laravel dramatically improved PHP development.</p>
+<p>Spring Boot transformed enterprise Java.</p>
+<p>Those achievements deserve recognition.</p>
+<p>NX9 simply asks a different question:</p>
+<blockquote>
+<p><strong>Does this framework solve <em>our</em> problem?</strong></p>
+</blockquote>
+<p>If the answer is yes, use it.</p>
+<p>If the answer is no, adding it merely increases long-term complexity.</p>
+<p>Engineering is not about choosing the most popular technology.</p>
+<p>It is about choosing the most appropriate one.</p>
+<hr>
+<h1>The Production Logs Tell a Story</h1>
+<p>The production logs describe a remarkably ordinary day on the public Internet.</p>
+<svg width="100%" height="356" viewBox="0 0 260 356" xmlns="http://www.w3.org/2000/svg" style="max-width: 300px; margin: 1.5rem 0;">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" />
+      </marker>
+    </defs>
+    <rect x="20.0" y="10" width="220" height="36" rx="18" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="1.5" /><text x="130.0" y="32.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Public deployment</text><line x1="130.0" y1="46" x2="130.0" y2="66" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="70" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="92.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Automated vulnerability scanners</text><line x1="130.0" y1="106" x2="130.0" y2="126" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="130" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="152.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Search engine and social crawlers</text><line x1="130.0" y1="166" x2="130.0" y2="186" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="190" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="212.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Twitter/X preview generation</text><line x1="130.0" y1="226" x2="130.0" y2="246" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="250" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="272.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Real desktop and mobile visitors</text><line x1="130.0" y1="286" x2="130.0" y2="306" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)" /><rect x="20.0" y="310" width="220" height="36" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width="1" /><text x="130.0" y="332.0" font-family="var(--font-ui)" font-size="13" font-weight="600" fill="var(--text)" text-anchor="middle">Additional vulnerability scanners</text></svg>
+<p>The site remained fully functional for legitimate users while automated scanners repeatedly searched for technologies that simply were not present.</p>
+<hr>
+<h1>Less Software Means Less Responsibility</h1>
+<p>Every dependency becomes another responsibility.</p>
+<p>Someone must:</p>
+<ul>
+<li>update it;</li>
+<li>audit it;</li>
+<li>patch it;</li>
+<li>monitor it;</li>
+<li>understand it.</li>
+</ul>
+<p>Every framework introduces conventions.</p>
+<p>Every plugin introduces assumptions.</p>
+<p>Every runtime introduces operational complexity.</p>
+<p>None of these are inherently negative.</p>
+<p>They are engineering trade-offs.</p>
+<p>NX9 deliberately chooses different trade-offs.</p>
+<p>Smaller deployments.</p>
+<p>Fewer dependencies.</p>
+<p>Explicit behaviour.</p>
+<p>Simpler operations.</p>
+<hr>
+<h1>Non-Goals</h1>
+<p>NX9 does <strong>not</strong> attempt to:</p>
+<ul>
+<li>replace every web framework;</li>
+<li>eliminate JavaScript;</li>
+<li>discourage modern development practices;</li>
+<li>claim that Rust is immune to vulnerabilities;</li>
+<li>promote security through obscurity.</li>
+</ul>
+<p>NX9 simply argues that software should be proportional to the problem being solved.</p>
+<hr>
+<h1>Conclusion</h1>
+<p>This philosophy extends beyond a single website.</p>
+<p>Every NX9 project—whether it is a URL shortener, an authentication service, a digital timestamping platform, or future infrastructure components—begins with the same engineering question:</p>
+<blockquote>
+<p><strong>What is the smallest amount of software required to solve this problem well?</strong></p>
+</blockquote>
+<p>The answer will not always be the same.</p>
+<p>Some problems genuinely require sophisticated frameworks.</p>
+<p>Many do not.</p>
+<p>NX9 exists to explore that second category.</p>
+<p>Not because minimalism is fashionable.</p>
+<p>Not because frameworks are flawed.</p>
+<p>But because simplicity remains one of the most effective engineering tools available.</p>
+<p>The production logs provide a practical demonstration of this philosophy.</p>
+<p>The Internet searched for PHP.</p>
+<p>It searched for WordPress.</p>
+<p>It searched for Laravel.</p>
+<p>It searched for Vue.</p>
+<p>It searched for Node.js deployment artifacts.</p>
+<p>It searched for technologies that have become commonplace.</p>
+<p>What it found instead was a deliberately minimal Rust application exposing only the functionality it was designed to provide.</p>
+<p>That outcome was not accidental.</p>
+<p>It was the result of an engineering decision made long before the first HTTP request reached the server.</p>
+<p><strong>Build only what you need.</strong></p>
+<p><strong>Deploy only what you trust.</strong></p>
+<p><strong>Maintain only what you own.</strong></p>
+<p>Because every component you choose <strong>not</strong> to deploy is one less component to configure, patch, monitor, audit—and one less component available to be targeted.</p>
+<p><strong>That is the NX9 philosophy.</strong></p></tbody></table>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="logo.svg" alt="NX9 Logo" class="footer-logo">
+        <div class="sub">Next Generation 9</div>
+      </div>
+      <p class="footer-motto">Software people can own,<br>understand,<br>and control.<br><br><strong>Always Free. Always Open. Always Yours.</strong></p>
+      <nav class="footer-links" aria-label="Repository links">
+        <a href="https://codeberg.org/thakares" target="_blank" rel="noopener noreferrer"><svg class="icon" style="width:16px;height:16px"><use href="#i-git"/></svg> Codeberg</a>
+        <a href="https://github.com/thakares?tab=repositories" target="_blank" rel="noopener noreferrer"><svg class="icon" style="width:16px;height:16px"><use href="#i-link"/></svg> GitHub</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">© <span id="year"></span> NX9 — an open-source ecosystem by Sunil Thakare. MIT / Apache-2.0.</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     THEME
+     ============================================================ */
+  const root = document.documentElement;
+  const themeToggle = document.getElementById("themeToggle");
+  const themeIcon = document.getElementById("themeIcon");
+  const themeLabel = document.getElementById("themeLabel");
+  const STORAGE_KEY = "nx9-theme";
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    themeIcon.textContent = theme === "dark" ? "●" : "○";
+    themeLabel.textContent = theme === "dark" ? "Dark" : "Light";
+    themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+
+  function initTheme() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "light" || stored === "dark") { applyTheme(stored); return; }
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(prefersDark ? "dark" : "light");
+  }
+
+  themeToggle.addEventListener("click", function () {
+    const current = root.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+    localStorage.setItem(STORAGE_KEY, next);
+  });
+
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function (e) {
+    if (!localStorage.getItem(STORAGE_KEY)) applyTheme(e.matches ? "dark" : "light");
+  });
+
+  initTheme();
+
+  /* ============================================================
+     MOBILE NAV
+     ============================================================ */
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("navLinks");
+
+  hamburger.addEventListener("click", function () {
+    const isOpen = navLinks.classList.toggle("is-open");
+    hamburger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  navLinks.querySelectorAll("a").forEach(function (link) {
+    link.addEventListener("click", function () {
+      navLinks.classList.remove("is-open");
+      hamburger.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  /* ============================================================
+     ICON HELPER
+     ============================================================ */
+  function iconSvg(id) {
+    return '<svg class="icon"><use href="#' + id + '"/></svg>';
+  }
+
+  /* ============================================================
+     DATA: DESIGN PHILOSOPHY
+     ============================================================ */
+  const philosophy = [
+    { icon: "i-key", grad: 1, glow: "--glow-1", title: "Operator Ownership", body: "The operator owns the binaries, the configuration, the databases, the backups, and the encryption keys. No service depends on proprietary APIs or cloud-hosted control planes." },
+    { icon: "i-server", grad: 6, glow: "--glow-6", title: "Self-Hosting First", body: "Every decision begins with one question: \u201cCan this be deployed and operated by a single administrator?\u201d If it needs Kubernetes or a managed database, the design is reconsidered." },
+    { icon: "i-gauge", grad: 3, glow: "--glow-3", title: "Simplicity Over Complexity", body: "One binary. One configuration. One SQLite database. One administrator. Simple systems are easier to understand, secure, and recover." },
+    { icon: "i-lock", grad: 4, glow: "--glow-4", title: "Privacy by Default", body: "Applications never assume cloud connectivity, analytics collection, telemetry uploads, or third-party tracking. Users decide what information leaves their infrastructure." },
+    { icon: "i-shield-check", grad: 5, glow: "--glow-5", title: "Security by Design", body: "Argon2id, Ed25519, BLAKE3, RBAC, CSRF protection, and audit logs are embedded throughout the stack \u2014 not added later." },
+    { icon: "i-wrench", grad: 2, glow: "--glow-2", title: "Operational Excellence", body: "Diagnostics, backups, restore procedures, migration tools, CLI administration, and documentation, in every project, from day one." },
+    { icon: "i-clock", grad: 7, glow: "--glow-7", title: "Long-Term Stability", body: "NX9 intentionally avoids dependency churn. The goal is software that remains understandable and maintainable years into the future." },
+    { icon: "i-git", grad: 4, glow: "--glow-4", title: "Open Source First", body: "Every NX9 codebase is 100% open source under permissive licenses. You have the fundamental right to inspect, build, and modify the software." },
+    { icon: "i-infinity", grad: 5, glow: "--glow-5", title: "Zero Vendor Lock-In", body: "All data is stored in standard SQLite files, configurations are plain text, and architectures strictly avoid proprietary integrations." }
+  ];
+
+  const philosophyGrid = document.getElementById("philosophyGrid");
+  philosophy.forEach(function (p) {
+    const card = document.createElement("article");
+    card.className = "card reveal";
+    card.style.setProperty("--card-grad", "var(--grad-" + p.grad + ")");
+    card.style.setProperty("--card-glow", "var(" + p.glow + ")");
+    card.innerHTML =
+      '<div class="icon-badge">' + iconSvg(p.icon) + '</div>' +
+      '<h3>' + p.title + '</h3>' +
+      '<p>' + p.body + '</p>';
+    philosophyGrid.appendChild(card);
+  });
+
+  /* ============================================================
+     DATA: ARCHITECTURAL PILLARS
+     ============================================================ */
+  const architecture = [
+    { icon: "i-cpu", grad: 1, glow: "--glow-1", title: "Pure Rust", body: "Memory safety, zero-cost abstractions, and fearless concurrency. Rust 2021 Edition, release-mode optimization, no runtime interpreter.", tag: "~10\u201312 MB per binary" },
+    { icon: "i-box", grad: 6, glow: "--glow-6", title: "Single Binary Deployment", body: "One executable contains the HTTP server, business logic, auth, migrations, CLI, and templates. No JVM, no Node.js, no Python, no app server.", tag: "cargo build --release" },
+    { icon: "i-database", grad: 5, glow: "--glow-5", title: "SQLite First", body: "ACID transactions, WAL concurrency, zero administration, and portable files. Several projects isolate data across multiple databases for tenant isolation.", tag: "users.db \u00b7 system.db \u00b7 content.db" },
+    { icon: "i-bolt", grad: 3, glow: "--glow-3", title: "Tokio Async Runtime", body: "Asynchronous I/O and lightweight tasks power web servers, DNS resolution, and background workers with high concurrency.", tag: "async / await" },
+    { icon: "i-route", grad: 4, glow: "--glow-4", title: "Axum Web Layer", body: "Routing, middleware, REST APIs, HTML rendering, authentication, and sessions \u2014 integrated naturally with Tokio and Rust's type system.", tag: "HTTP \u00b7 middleware \u00b7 sessions" },
+    { icon: "i-layers", grad: 2, glow: "--glow-2", title: "Layered Architecture", body: "auth / cli / db / handlers / jobs / services / templates / utils / web \u2014 each layer owns one responsibility, for easier testing and lower coupling.", tag: "src/ layout" },
+    { icon: "i-terminal", grad: 7, glow: "--glow-7", title: "CLI-First Operations", body: "serve \u00b7 doctor \u00b7 backup \u00b7 restore \u00b7 migrate \u00b7 create-admin \u00b7 init \u2014 every service is administrable headless, over SSH, from a script.", tag: "automation-friendly" },
+    { icon: "i-shield", grad: 1, glow: "--glow-1", title: "Security Stack", body: "Argon2id password hashing, Ed25519 signatures, BLAKE3 hashing, CSRF protection, RBAC, and hardened compiler flags \u2014 RELRO, PIE, least privilege.", tag: "defense in depth" },
+    { icon: "i-monitor", grad: 6, glow: "--glow-6", title: "Operational Tooling", body: "Health checks, migration verification, automatic backups, restore tools, Docker support, systemd units, and structured logging, out of the box.", tag: "diagnostics \u00b7 systemd \u00b7 docker" }
+  ];
+
+  const architectureGrid = document.getElementById("architectureGrid");
+  architecture.forEach(function (a) {
+    const card = document.createElement("article");
+    card.className = "card reveal";
+    card.style.setProperty("--card-grad", "var(--grad-" + a.grad + ")");
+    card.style.setProperty("--card-glow", "var(" + a.glow + ")");
+    card.innerHTML =
+      '<div class="icon-badge">' + iconSvg(a.icon) + '</div>' +
+      '<h3>' + a.title + '</h3>' +
+      '<p>' + a.body + '</p>' +
+      '<span class="card-tag">' + a.tag + '</span>';
+    architectureGrid.appendChild(card);
+  });
+
+  /* ============================================================
+     DATA: SECURITY
+     ============================================================ */
+  const security = [
+    { icon: "i-shield-check", grad: 4, glow: "--glow-4", title: "Argon2id Hashing", body: "Memory-hard, CPU-hard password hashing by default for all user credentials." },
+    { icon: "i-key", grad: 1, glow: "--glow-1", title: "Ed25519 Signatures", body: "Fast, secure public-key cryptography for tokens and inter-service authentication." },
+    { icon: "i-lock", grad: 6, glow: "--glow-6", title: "Strict RBAC", body: "Role-Based Access Control enforced at the middleware layer before business logic executes." },
+    { icon: "i-shield", grad: 5, glow: "--glow-5", title: "CSRF & Security Headers", body: "Double-submit cookies, strict transport security, and hardened Content Security Policies built-in." }
+  ];
+  const securityGrid = document.getElementById("securityGrid");
+  security.forEach(function (s) {
+    const card = document.createElement("article");
+    card.className = "card reveal";
+    card.style.setProperty("--card-grad", "var(--grad-" + s.grad + ")");
+    card.style.setProperty("--card-glow", "var(" + s.glow + ")");
+    card.innerHTML =
+      '<div class="icon-badge">' + iconSvg(s.icon) + '</div>' +
+      '<h3>' + s.title + '</h3>' +
+      '<p>' + s.body + '</p>';
+    securityGrid.appendChild(card);
+  });
+
+  /* ============================================================
+     DATA: POSITIONING
+     ============================================================ */
+  const positioningBody = document.getElementById("positioningBody");
+  const posData = [
+    { bad: "Requires Kubernetes & Helm", good: "Deployed via a single binary or systemd" },
+    { bad: "Hidden telemetry and usage analytics", good: "Zero tracking, completely air-gapped capable" },
+    { bad: "1GB+ RAM for a 'Hello World' microservice", good: "10-20MB RAM for a high-traffic production service" },
+    { bad: "Forced cloud subscriptions", good: "Your hardware, your data, your rules" },
+    { bad: "Complex web of dependencies", good: "Static binaries with SQLite built-in" }
+  ];
+  posData.forEach(p => {
+    positioningBody.innerHTML += `<tr><td>${p.bad}</td><td>${p.good}</td></tr>`;
+  });
+
+  /* ============================================================
+     DATA: PROJECTS
+     ============================================================ */
+  const projectGrid = document.getElementById("projectGrid");
+  const projects = [
+    { 
+      title: "nx9-url-shortener", 
+      desc: "A lightweight, self-hosted URL management platform. Combines URL shortening, analytics, QR codes, password protection, and API automation with zero external dependencies.", 
+      status: "STABLE", 
+      icon: "i-link", 
+      tech: ["Rust", "SQLite", "Axum", "Askama"],
+      grad: 2, glow: "--glow-2",
+      link: "https://codeberg.org/thakares/nx9-url-shortener",
+      github: "https://github.com/thakares/nx9-url-shortener"
+    },
+    { 
+      title: "nx9-auth", 
+      desc: "Identity and Access Management (IAM) service. Provides authentication, authorization, session management, and RBAC in a single incredibly fast deployable binary.", 
+      status: "BETA", 
+      icon: "i-lock", 
+      tech: ["Rust", "SQLite", "Security"],
+      grad: 4, glow: "--glow-4",
+      link: "https://codeberg.org/thakares/nx9-auth",
+      github: "https://github.com/thakares/nx9-auth"
+    },
+    { 
+      title: "nx9-dns-server", 
+      desc: "High-performance, fully RFC-compliant authoritative DNS server leveraging modern async networking and a robust SQLite backend.", 
+      status: "ALPHA", 
+      icon: "i-globe", 
+      tech: ["Rust", "DNS", "Async"],
+      grad: 6, glow: "--glow-6",
+      link: "https://codeberg.org/thakares/nx9-dns-server",
+      github: "https://github.com/thakares/nx9-dns-server"
+    },
+    { 
+      title: "nx9-chronoseal-rs", 
+      desc: "Privacy-first browser attestation framework for anti-bot and anti-AI scraping. Uses Ed25519 heartbeat chains and WASM attestation without tracking users.", 
+      status: "STABLE", 
+      icon: "i-shield", 
+      tech: ["Rust", "WASM", "Ed25519"],
+      grad: 5, glow: "--glow-5",
+      link: "https://codeberg.org/thakares/nx9-chronoseal-rs",
+      github: "https://github.com/thakares/nx9-chronoseal-rs"
+    }
+  ];
+  projects.forEach(p => {
+    projectGrid.innerHTML += `
+      <div class="project-card reveal" style="--card-grad: var(--grad-${p.grad}); --card-glow: var(${p.glow})">
+        <div class="project-card-head">
+          <div class="project-title">
+            <div class="icon-badge">${iconSvg(p.icon)}</div>
+            <h3>${p.title}</h3>
+          </div>
+          <span class="status-badge" style="background: var(--grad-${p.grad === 5 ? 5 : p.grad === 4 ? 4 : p.grad === 6 ? 6 : 2})">${p.status}</span>
+        </div>
+        <p class="desc">${p.desc}</p>
+        <div class="tech-badges">
+          ${p.tech.map(t => `<span class="tech-badge" style="background: var(--grad-${p.grad})">${t}</span>`).join("")}
+        </div>
+        <div class="project-links">
+          <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline"><svg class="icon" style="width:14px;height:14px"><use href="#i-git"/></svg> Codeberg</a>
+          <a href="${p.github}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline"><svg class="icon" style="width:14px;height:14px"><use href="#i-link"/></svg> GitHub</a>
+        </div>
+      </div>
+    `;
+  });
+
+  /* ============================================================
+     DATA: STATS
+     ============================================================ */
+  const statsGrid = document.getElementById("statsGrid");
+  const stats = [
+    { num: "0", label: "External Dependencies", grad: 1 },
+    { num: "1", label: "Binary to Deploy", grad: 6 },
+    { num: "9", label: "Core Projects", grad: 4 },
+    { num: "<15MB", label: "RAM per Service", grad: 5 }
+  ];
+  stats.forEach(s => {
+    statsGrid.innerHTML += `
+      <div class="stat reveal" style="--card-grad: var(--grad-${s.grad})">
+        <span class="num">${s.num}</span>
+        <span class="label">${s.label}</span>
+      </div>
+    `;
+  });
+
+  /* ============================================================
+     DATA: VALUES
+     ============================================================ */
+  const valueGrid = document.getElementById("valueGrid");
+  const values = [
+    { num: "01", text: "User Ownership", grad: 1, glow: "--glow-1" },
+    { num: "02", text: "Absolute Privacy", grad: 2, glow: "--glow-2" },
+    { num: "03", text: "Open Source", grad: 3, glow: "--glow-3" },
+    { num: "04", text: "Simplicity First", grad: 4, glow: "--glow-4" },
+    { num: "05", text: "CLI Automation", grad: 5, glow: "--glow-5" },
+    { num: "06", text: "Open Standards", grad: 6, glow: "--glow-6" },
+    { num: "07", text: "Long-term Stability", grad: 7, glow: "--glow-7" },
+    { num: "08", text: "Linux Native", grad: 1, glow: "--glow-1" },
+    { num: "09", text: "Zero Tracking", grad: 2, glow: "--glow-2" },
+    { num: "10", text: "No Vendor Lock", grad: 3, glow: "--glow-3" },
+    { num: "11", text: "Performant", grad: 4, glow: "--glow-4" },
+    { num: "12", text: "Understandable", grad: 5, glow: "--glow-5" }
+  ];
+  values.forEach(v => {
+    valueGrid.innerHTML += `
+      <div class="value-chip reveal" style="--card-grad: var(--grad-${v.grad}); --card-glow: var(${v.glow})">
+        <span class="n">${v.num}</span>
+        <span class="t">${v.text}</span>
+      </div>
+    `;
+  });
+
+  /* ============================================================
+     DATA: ROADMAP
+     ============================================================ */
+  const circuit = document.getElementById("circuit");
+  const roadmap = [
+    { num: "01", name: "ChronoSeal", state: "STABLE", active: true },
+    { num: "02", name: "DNS Server", state: "ALPHA", active: true },
+    { num: "03", name: "Auth", state: "BETA", active: true },
+    { num: "04", name: "URL Shortener", state: "STABLE", active: true },
+    { num: "05", name: "Project 5", state: "PLANNED", active: false },
+    { num: "06", name: "Project 6", state: "PLANNED", active: false },
+    { num: "07", name: "Project 7", state: "PLANNED", active: false },
+    { num: "08", name: "Project 8", state: "PLANNED", active: false },
+    { num: "09", name: "Project 9", state: "PLANNED", active: false }
+  ];
+  roadmap.forEach(r => {
+    circuit.innerHTML += `
+      <div class="node ${r.active ? 'is-active' : ''} reveal">
+        <div class="pad">${r.num}</div>
+        <div class="text">
+          <div class="name">${r.name}</div>
+          <div class="state">${r.state}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  /* ============================================================
+     REVEAL ANIMATIONS
+     ============================================================ */
+  const observerOptions = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.1
+  };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+  
+  // Set copyright year
+  document.getElementById("year").textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

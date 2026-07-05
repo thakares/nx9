@@ -1,0 +1,47 @@
+name: nx9-www
+services:
+  nx9-www:
+    cpu_shares: 90
+    command: []
+    container_name: nx9-www
+    deploy:
+      resources:
+        limits:
+          memory: 31940M
+    hostname: nx9-www-www
+    image: nginx:alpine
+    labels:
+      icon: https://github.com/thakares/nx9-www-rs/raw/main/logo/nx9-www.svg
+    ports:
+      - mode: ingress
+        target: 80
+        published: "8484"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /DATA/AppData/nx9-www
+        target: /usr/share/nginx/html
+        read_only: true
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    environment: []
+    networks:
+      - default
+    privileged: false
+networks:
+  default:
+    name: nx9-www_default
+x-casaos:
+  author: self
+  category: self
+  hostname: ""
+  icon: https://github.com/thakares/nx9-www-rs/raw/main/logo/nx9-www.svg
+  index: /
+  is_uncontrolled: false
+  port_map: "8484"
+  scheme: http
+  title:
+    custom: nx9-www
