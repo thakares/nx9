@@ -1,9 +1,11 @@
-# NX9 Next Generation 9
+# NX9
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://nx9.in/icon-dark.svg">
+  <img src="https://nx9.in/logo.svg" width="300" alt="NX9 Logo">
+</picture>
 
-<img src="https://nx9.in/logo.svg" width="300" alt="NX9 Logo">
-
-A philosophy-driven ecosystem of self-hosted, privacy-first software.
+**Next Generation 9** — A philosophy-driven ecosystem of self-hosted, privacy-first software.
 
 Every project is built around one core idea:
 
