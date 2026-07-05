@@ -1,0 +1,10 @@
+# robots.txt for https://nx9.in
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://nx9.in/sitemap.xml
+
+# Optional crawl delay (ignored by Google)
+Crawl-delay: 1
