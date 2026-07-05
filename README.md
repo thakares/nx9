@@ -1,8 +1,8 @@
 # NX9
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://nx9.in/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://nx9.in/logo-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://nx9.in/logo-light.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://nx9.in/logo-dark.svg">
   <img src="https://nx9.in/logo-light.svg" width="320" alt="NX9 Logo">
 </picture>
 
