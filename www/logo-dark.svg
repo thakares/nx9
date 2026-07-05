@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="145 195 810 215" width="100%" height="100%">
+  <!-- Background -->
+  
+  <g fill="#000000">
+    <!-- Server Rack Blades -->
+    <!-- Top -->
+    <rect x="150" y="200" width="280" height="48" rx="24"/>
+    <!-- Middle -->
+    <rect x="150" y="260" width="280" height="48" rx="24"/>
+    <!-- Bottom -->
+    <rect x="150" y="320" width="280" height="48" rx="24"/>
+
+    <!-- Stem -->
+    <rect x="278" y="368" width="24" height="18"/>
+    
+    <!-- Base plate -->
+    <rect x="235" y="386" width="110" height="12"/>
+    
+    <!-- Network Lines -->
+    <!-- Left -->
+    <rect x="150" y="388" width="73" height="8"/>
+    <!-- Right -->
+    <rect x="357" y="388" width="73" height="8"/>
+  </g>
+
+  <!-- LEDs (Cutouts) -->
+  <g fill="#000000">
+    <circle cx="400" cy="224" r="8"/>
+    <circle cx="400" cy="284" r="8"/>
+    <circle cx="400" cy="344" r="8"/>
+  </g>
+
+  <!-- Main Logo Text -->
+  <text x="470" y="368" font-family="'Montserrat', 'Arial Black', 'Impact', sans-serif" font-size="235" font-weight="900" fill="#000000" letter-spacing="-4">NX9</text>
+
+  <!-- Subtitle -->
+  <text x="485" y="400" font-family="'Montserrat', 'Segoe UI', 'Helvetica Neue', sans-serif" font-size="26" font-weight="700" fill="#000000" letter-spacing="2">OWN YOUR INFRASTRUCTURE.</text>
+
+</svg>

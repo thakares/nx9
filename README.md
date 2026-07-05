@@ -1,71 +1,184 @@
 # NX9
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://nx9.in/icon-dark.svg">
-  <img src="https://nx9.in/logo.svg" width="300" alt="NX9 Logo">
+  <source media="(prefers-color-scheme: dark)" srcset="https://nx9.in/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://nx9.in/logo-light.svg">
+  <img src="https://nx9.in/logo-light.svg" width="320" alt="NX9 Logo">
 </picture>
 
-**Next Generation 9** — A philosophy-driven ecosystem of self-hosted, privacy-first software.
+**NX9 (Next Generation 9)** is an ecosystem of independent, open-source, self-hosted software built in Rust.
 
-Every project is built around one core idea:
+Every project follows the same philosophy:
 
-> **Infrastructure should belong to its operator — not to a cloud provider, subscription service, or vendor.**
+> **Infrastructure should belong to its operator—not to a cloud provider, subscription service, or vendor.**
 
-### Philosophy
-
-NX9 is not a framework or a platform. It is a collection of independent, single-binary Rust applications designed for:
-
-- Operator ownership
-- Privacy by default
-- Self-hosting first
-- Simplicity over complexity
-- Long-term maintainability
-- Zero telemetry or vendor lock-in
-
-We deliberately choose minimal dependencies, explicit routing, SQLite-first storage, and Linux-native design. The goal is software that is easy to understand, deploy, operate, and trust — even years from now.
-
-### Core Projects
-
-- **[nx9-url-shortener](https://codeberg.org/thakares/nx9-url-shortener)**  
-  Multi-user URL shortener with analytics, QR codes, password protection, expiration, and tenant isolation.
-
-- **[nx9-auth](https://codeberg.org/thakares/nx9-auth)**  
-  Lightweight identity and access management service with sessions, PATs, RBAC, and audit logging.
-
-- **[nx9-dns-server](https://codeberg.org/thakares/nx9-dns-server)**  
-  Authoritative DNS server with DNSSEC support. Lightweight and designed for self-hosted use.
-
-- **[nx9-chronoseal-rs](https://codeberg.org/thakares/nx9-chronoseal-rs)**  
-  Privacy-first browser attestation framework for anti-bot and anti-AI scraping protection.
-
-### Documentation
-
-- [Philosophy → Engineering Beyond Frameworks](https://nx9.in/case-study.html)
-- [Architecture Overview](ARCHITECTURE.md)
-- [Case Study: How Simplicity Defended Against Real Attacks](https://nx9.in/case-study.html)
-- [Roadmap](ROADMAP.md)
-
-### Website
-
-The full website source is available in the [`www/`](www/) directory.
-
-### Values
-
-- Privacy by design
-- Single binary deployments
-- Explicit routing
-- Operator sovereignty
-- Open Source (permissive licenses)
-- No telemetry. No vendor lock-in.
-
-### Get Involved
-
-- Star or fork the projects you find useful
-- Open issues or discussions for feedback
-- All projects are independent but share the same architectural principles
+NX9 develops software that is lightweight, privacy-first, Linux-native, and designed to remain understandable, maintainable, and deployable for years—not just until the next framework trend arrives.
 
 ---
 
-**NX9** — Software people can own, understand, and control.
+## Philosophy
 
-Built by [Sunil Thakare](https://codeberg.org/thakares).
+Modern software has become increasingly dependent on cloud platforms, proprietary services, massive dependency trees, and unnecessary complexity.
+
+NX9 takes the opposite approach.
+
+Every project is designed to be:
+
+- Self-hostable
+- Privacy-first
+- Single-binary whenever practical
+- Linux-native
+- Lightweight
+- Open source
+- Easy to deploy
+- Easy to understand
+- Free from vendor lock-in
+
+Rather than building one monolithic platform, NX9 consists of independent applications that each solve a single problem well while sharing the same engineering philosophy.
+
+---
+
+## Projects
+
+Current projects under the NX9 ecosystem include:
+
+### nx9-url-shortener
+
+A modern multi-user URL shortener featuring:
+
+- Analytics
+- QR codes
+- Password protection
+- Link expiration
+- Tenant isolation
+- REST API
+- SQLite-first architecture
+
+Repository:
+
+- https://github.com/thakares/nx9-url-shortener
+- https://codeberg.org/thakares/nx9-url-shortener
+
+---
+
+### nx9-auth
+
+Lightweight identity and access management.
+
+Features include:
+
+- User authentication
+- Sessions
+- Personal Access Tokens (PATs)
+- RBAC
+- Audit logging
+- Multi-tenant support
+
+Repository:
+
+- https://github.com/thakares/nx9-auth
+- https://codeberg.org/thakares/nx9-auth
+
+---
+
+### nx9-dns-server
+
+An authoritative DNS server designed for self-hosted infrastructure.
+
+Features:
+
+- DNSSEC
+- Zone management
+- Lightweight architecture
+- Rust implementation
+
+Repository:
+
+- https://github.com/thakares/nx9-dns-server
+- https://codeberg.org/thakares/nx9-dns-server
+
+---
+
+### nx9-chronoseal-rs
+
+A privacy-first browser attestation framework that helps distinguish legitimate browsers from automated abuse without invasive tracking.
+
+Repository:
+
+- https://github.com/thakares/nx9-chronoseal-rs
+- https://codeberg.org/thakares/nx9-chronoseal-rs
+
+---
+
+## Engineering Principles
+
+Every NX9 project follows these principles:
+
+- Single-purpose applications
+- Explicit routing over magic
+- SQLite-first whenever appropriate
+- Minimal dependencies
+- Predictable deployment
+- Human-readable configuration
+- Secure by default
+- Long-term maintainability
+- Open standards
+- Backward compatibility whenever practical
+
+---
+
+## Documentation
+
+- Architecture Overview
+- Roadmap
+- Engineering Philosophy
+- Design Decisions
+
+(Detailed documentation will continue to expand as the ecosystem grows.)
+
+---
+
+## Website
+
+Official website:
+
+**https://nx9.in**
+
+The website source is maintained in this repository under `www/`.
+
+---
+
+## Core Values
+
+- Privacy First
+- Operator Ownership
+- Simplicity Over Complexity
+- Linux Native
+- Open Source
+- Single Binary
+- Explicit Design
+- No Telemetry
+- No Vendor Lock-in
+- Long-Term Stability
+
+---
+
+## Contributing
+
+Bug reports, documentation improvements, feature requests, and code contributions are all welcome.
+
+If you believe software should remain understandable, deployable, and fully controlled by its users, you'll feel at home in the NX9 ecosystem.
+
+---
+
+## Links
+
+- Website: https://nx9.in
+- GitHub: https://github.com/thakares
+- Codeberg: https://codeberg.org/thakares
+
+---
+
+**NX9**
+
+**Software people can own, understand, and control.**
