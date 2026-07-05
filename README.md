@@ -1,9 +1,13 @@
 # NX9
 
 <picture>
+  <!-- Dark UI → use the light (white) logo -->
   <source media="(prefers-color-scheme: dark)" srcset="https://nx9.in/logo-light.svg">
+
+  <!-- Light UI → use the dark (black) logo -->
   <source media="(prefers-color-scheme: light)" srcset="https://nx9.in/logo-dark.svg">
-  <img src="https://nx9.in/logo-light.svg" width="320" alt="NX9 Logo">
+
+  <img src="https://nx9.in/logo-dark.svg" width="320" alt="NX9 Logo">
 </picture>
 
 **NX9 (Next Generation 9)** is an ecosystem of independent, open-source, self-hosted software built in Rust.
