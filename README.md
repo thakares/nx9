@@ -1,6 +1,9 @@
-# NX9
+# NX9 Next Generation 9
 
-**Next Generation 9** — A philosophy-driven ecosystem of self-hosted, privacy-first software.
+
+<img src="https://nx9.in/logo.svg" width="300" alt="NX9 Logo">
+
+A philosophy-driven ecosystem of self-hosted, privacy-first software.
 
 Every project is built around one core idea:
 

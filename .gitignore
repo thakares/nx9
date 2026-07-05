@@ -1,0 +1,19 @@
+# Rust
+target/
+Cargo.lock
+
+# Editors
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Logs
+*.log
+
+# Temporary
+tmp/
